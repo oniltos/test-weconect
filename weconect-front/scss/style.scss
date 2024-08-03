@@ -1,0 +1,83 @@
+// Variables
+$font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$header-background-color: #d3d3d3;
+$main-background-color: #f8f8f8;
+$text-color: #333;
+$header-height: 60px;
+
+// Mixins
+@mixin centered-content {
+  margin: 0 auto;
+  width: 80%;
+}
+
+// Global styles
+body {
+  font-family: $font-family;
+  background-color: $main-background-color;
+  color: $text-color;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: $header-background-color;
+  height: $header-height;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid darken($header-background-color, 10%);
+  padding-bottom: 2rem;
+}
+
+main {
+  background-color: $main-background-color;
+  padding: 20px 0;
+}
+
+.container {
+  @include centered-content;
+  padding: 0 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: darken($text-color, 20%);
+  margin: 20px 0;
+}
+
+p {
+  line-height: 1.6;
+  margin: 10px 0;
+}
+
+.articles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+article {
+  display: flex;
+  align-items: flex-start;
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.article-image {
+    max-width: 300px;
+    margin-right: 20px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  
+  .article-image img {
+    max-width: 100%;
+    border-radius: 4px;
+  }
+  
+  .article-content {
+    flex: 1;
+  }

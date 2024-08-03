@@ -1,0 +1,20 @@
+Resources:
+  MyS3Bucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: "weconnect-test-files"
+      AccessControl: Private
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: Environment
+          Value: Development
+        - Key: Project
+          Value: MyProject
+
+Outputs:
+  S3BucketName:
+    Description: "The name of the S3 bucket"
+    Value: !Ref MyS3Bucket
+    Export:
+      Name: "MyS3BucketName"
