@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation Template for RDS
+
+Parameters:
+  DBName:
+    Description: The database name
+    Type: String
+    Default: laravel
+  DBUser:
+    Description: The database admin account username
+    Type: String
+    Default: admin
+  DBPassword:
+    Description: The database admin account password
+    Type: String
+    NoEcho: true
+    Default: password
+  DBInstanceClass:
+    Description: The database instance type
+    Type: String
+    Default: db.t3.micro
+  DBAllocatedStorage:
+    Description: The size of the database (GB)
+    Type: String
+    Default: '20'
+  VPCSecurityGroups:
+    Description: List of security groups to assign to the RDS instance
+    Type: List<AWS::EC2::SecurityGroup::Id>
+
+Resources:
+  MyDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: !Ref DBName
+      AllocatedStorage: !Ref DBAllocatedStorage
+      DBInstanceClass: !Ref DBInstanceClass
+      Engine: mysql
+      MasterUsername: !Ref DBUser
+      MasterUserPassword: !Ref DBPassword
+      VPCSecurityGroups: !Ref VPCSecurityGroups
+      PubliclyAccessible: false
+
+Outputs:
+  DBEndpoint:
+    Description: The database endpoint
+    Value: !GetAtt MyDB.Endpoint.Address
