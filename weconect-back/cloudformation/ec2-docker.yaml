@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation Template for EC2 with Docker
+
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access
+    Type: AWS::EC2::KeyPair::KeyName
+  InstanceType:
+    Description: EC2 instance type
+    Type: String
+    Default: t2.micro
+  VPCSecurityGroups:
+    Description: List of security groups to assign to the EC2 instance
+    Type: List<AWS::EC2::SecurityGroup::Id>
+  DBEndpoint:
+    Description: The RDS database endpoint
+    Type: String
+  DBName:
+    Description: The name of the database
+    Type: String
+    Default: laravel
+  DBUser:
+    Description: The database admin account username
+    Type: String
+    Default: admin
+  DBPassword:
+    Description: The database admin account password
+    Type: String
+    NoEcho: true
+    Default: password
+  GitHubRepo:
+    Description: The GitHub repository URL (without https://)
+    Type: String
+  S3AccessKey:
+    Description: The AWS access key for S3
+    Type: String
+    NoEcho: true
+  S3SecretKey:
+    Description: The AWS secret key for S3
+    Type: String
+    NoEcho: true
+  S3Region:
+    Description: The AWS region for S3
+    Type: String
+    Default: us-east-1
+  S3Bucket:
+    Description: The S3 bucket name
+    Type: String
+
+Resources:
+  MyEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      SecurityGroupIds: !Ref VPCSecurityGroups
+      ImageId: ami-0c55b159cbfafe1f0  # This is an Amazon Linux 2 AMI in the us-east-1 region, update it based on your region
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+          amazon-linux-extras install docker -y
+          service docker start
+          usermod -a -G docker ec2-user
+          curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+          ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+          # Install Git
+          yum install -y git
+
+          # Clone the GitHub repository
+          cd /home/ec2-user
+          git clone https://${GitHubRepo} laravel
+          cd laravel
+
+          # Update .env file
+          cp .env.example .env
+          sed -i 's/DB_HOST=127.0.0.1/DB_HOST=${DBEndpoint}/' .env
+          sed -i 's/DB_DATABASE=laravel/DB_DATABASE=${DBName}/' .env
+          sed -i 's/DB_USERNAME=root/DB_USERNAME=${DBUser}/' .env
+          sed -i 's/DB_PASSWORD=/DB_PASSWORD=${DBPassword}/' .env
+          echo "AWS_ACCESS_KEY_ID=${S3AccessKey}" >> .env
+          echo "AWS_SECRET_ACCESS_KEY=${S3SecretKey}" >> .env
+          echo "AWS_DEFAULT_REGION=${S3Region}" >> .env
+          echo "AWS_BUCKET=${S3Bucket}" >> .env
+
+          # Run Docker Compose for production
+          docker-compose -f docker-compose.prod.yml up -d
+
+Outputs:
+  InstanceId:
+    Description: The instance ID
+    Value: !Ref MyEC2Instance
+  PublicIp:
+    Description: The public IP address of the EC2 instance
+    Value: !GetAtt MyEC2Instance.PublicIp
