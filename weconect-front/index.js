@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Define the API endpoint
-    const apiEndpoint = 'http://localhost/api/articles';
+    const apiEndpoint = 'http://weconect-test-api.niltonfreitas.com/api/articles';
 
     // Fetch articles from the API and display them
     fetch(apiEndpoint)
