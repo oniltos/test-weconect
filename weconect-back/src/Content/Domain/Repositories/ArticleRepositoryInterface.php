@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace Content\Domain\Repositories;
 use Content\Domain\Entities\Article;
 
+/**
+ * ArticleRepositoryInterface
+ *
+ * This interface defines the methods for interacting with the article repository.
+ */
 interface ArticleRepositoryInterface
 {
     public function findById(int $id): ?Article;

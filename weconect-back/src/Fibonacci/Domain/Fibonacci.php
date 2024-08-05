@@ -8,7 +8,7 @@ class Fibonacci {
     /**
      * Optimized version of fibonnaci generator function with time and space complexity O(n)
      * and memory efficiency by storing only the last two computed values when needed
-     * 
+     *
      * @param mixed $n
      * @return int[]
      */

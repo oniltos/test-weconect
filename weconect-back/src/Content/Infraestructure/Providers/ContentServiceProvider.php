@@ -7,6 +7,12 @@ use Content\Domain\Repositories\ArticleRepositoryInterface;
 use Content\Infraestructure\Repository\ArticleRepository;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * ContentServiceProvider class
+ *
+ * This service provider binds the Article repository interface to its implementation
+ * and loads necessary resources such as migrations, factories, and routes.
+ */
 class ContentServiceProvider extends ServiceProvider
 {
     public function register(): void
